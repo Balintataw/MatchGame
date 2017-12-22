@@ -6,7 +6,8 @@ var MatchGame = {};
 */
 
 $(document).ready(function () {
-  MatchGame.renderCards(MatchGame.generateCardValues(), $('#game') );
+  var $game = $('#game');
+  MatchGame.renderCards(MatchGame.generateCardValues(), $game);
 });
 
 
@@ -59,8 +60,7 @@ MatchGame.renderCards = function(cardValues, $game) {
     $game.append($card);
   };
 
-  //('.card').onClick(.flipCard($(this). $('#game')));
-  $('.card').click(function() {
+    $('.card').click(function() {
     MatchGame.flipCard($(this), $('#game'));
   });
 };
@@ -74,37 +74,32 @@ MatchGame.flipCard = function($card, $game) {
 
   if ($card.data('flipped')) {
     return;
-  };
-
-  if ($game.data('flippedCards').length == 2) {
-    return;
-  };
+  }
 
   $card.css('background-color', $card.data('color'));
   $card.text($card.data('value'));
   $card.data('flipped', true);
+  //$flippedCards.push($card);
 
-  if ($game.data('flippedCards').length == 1) {
-    $game.data('flippedCards').push($card);
+  var flippedCards = $game.data('flippedCards');
+  flippedCards.push($card);
 
-    var $card1 = ($game.data('flippedCards')[0]);
-    var $card2 = ($game.data('flippedCards')[1]);
+  var $card1 = flippedCards[0];
+  var $card2 = flippedCards[1];
 
-    if ($card1.data('value') == $card2.data('value')) {
-      $card1.css('background-color', 'rgb(153, 153, 153)');
-      $card2.css('background-color', 'rgb(153, 153, 153)');
-      $game.data('flippedCards').length = 0;
-    } else {
-      setTimeout(function () {
-        $card1.text('').css('background-color', 'rgb(32, 64, 86)').data('flipped', false);
-        $card2.text('').css('background-color', 'rgb(32, 64, 86)').data('flipped', false);
-        $game.data('flippedCards').length = 0;
-      }, 1000);
+  if (flippedCards.length == 2) {
+
+      if ($card1.data('value') == $card2.data('value')) {
+        $card1.css('background-color', 'rgb(153, 153, 153)', 'color', 'rgb(204, 204, 204)');
+        $card2.css('background-color', 'rgb(153, 153, 153)', 'color', 'rgb(204, 204, 204)');
+      } else {
+        $('.card').off('click');
+        setTimeout(function () {
+          $card1.text('').css('background-color', 'rgb(32, 64, 86)').data('flipped', false).html('');
+          $card2.text('').css('background-color', 'rgb(32, 64, 86)').data('flipped', false).html('');
+          //$flippedCards.length = 0;
+        }, 1000);
+      }
+      $game.data('flippedCards', []);
     }
-
-  } else if ($game.data('flippedCards').length == 0) {
-    $game.data('flippedCards').push($card);
-
-  };
-
 };
