@@ -5,30 +5,66 @@ var MatchGame = {};
   Renders a 4x4 board of cards.
 */
 
-$(document).ready(function () {
+$(document).ready(function() {
   var $game = $('#game');
-  MatchGame.renderCards(MatchGame.generateCardValues(), $game);
+  var values = MatchGame.generateCardValues();
+  MatchGame.renderCards(values, $game);
+  $(':reset')
 });
 
+$('#btn-1').on('click', function() {
+  var counter = 0;
+  var values = MatchGame.generateCardValues();
+  MatchGame.renderCards(MatchGame.generateCardValues(), $('#game'));
+});
+
+
+
+
+/* --Click Counter-- */
+
+var cardClick = (function () {
+  var counter = 0;
+  return function () {return counter += 1};
+})();
+
+function myFunction () {
+  document.getElementById("count").innerHTML = cardClick();
+};
+
+/* --reset counter --*/
+//
+// $('btn-1').on('click', function() {
+//   var resetClick = (function() {
+//     var reset = 0;
+//     return function () {return reset = 0};
+//   })();
+//
+//   function myFunction () {
+//     document.getElementById("count").innerHTML = resetClick();
+// };
+// });
 
 /*
   Generates and returns an array of matching card values.
  */
 
 MatchGame.generateCardValues = function () {
-  //debugger;
-  var array = [];
+  var sequentialValues = [];
+
+  for (var value = 1; value <= 8; value++) {
+    sequentialValues.push(value);
+    sequentialValues.push(value);
+  };
+
   var cardValues = [];
-  for (i = 0; i < 8; i++) {
-    array.push(i + 1);
-    array.push(i + 1);
+
+  while (sequentialValues.length > 0) {
+    var randomIndex = Math.floor(Math.random() * sequentialValues.length);
+    var randomValue = sequentialValues.splice(randomIndex, 1)[0];
+    cardValues.push(randomValue);
   };
-  while (array.length > 0) {
-    var arrayIndex = Math.floor(Math.random() * array.length);
-    cardValues.push(array[arrayIndex]);
-    array.splice(arrayIndex, 1);
-  };
-  console.log(cardValues);
+
   return cardValues;
 };
 
@@ -38,7 +74,7 @@ MatchGame.generateCardValues = function () {
 */
 
 MatchGame.renderCards = function(cardValues, $game) {
-  var colorValues = [
+  var colors = [
     'hsl(25, 85%, 65%)',
     'hsl(55, 85%, 65%)',
     'hsl(90, 85%, 65%)',
@@ -52,16 +88,29 @@ MatchGame.renderCards = function(cardValues, $game) {
   $game.empty();
   $game.data('flippedCards', []);
 
-  for (i = 0; i < cardValues.length; i++) {
-    var $card = $('<div class="col-sm-3 card"></div>');
-    $card.data('value', cardValues[i]);
-    $card.data('flipped', false);
-    $card.data('color', colorValues[cardValues[i] - 1]);
-    $game.append($card);
+  for (var i = 0; i < cardValues.length; i++) {
+    var value = cardValues[i];
+    var color = colors[value - 1];
+    var data = {
+      value: value,
+      color: color,
+      isFlipped: false
+    };
+
+    var $cardElement = $('<div class="col-xs-3 card"></div>');
+    $cardElement.data(data);
+
+    $game.append($cardElement);
   };
 
-    $('.card').click(function() {
+  $('.card').click(function() {
     MatchGame.flipCard($(this), $('#game'));
+  });
+
+  $('#reset-button').on('click', function() {
+    clearInterval(timerID);
+    $('.timer').text("");
+    MatchGame.renderCards(MatchGame.generateCardValues(), $('#game'));
   });
 };
 
@@ -71,35 +120,40 @@ MatchGame.renderCards = function(cardValues, $game) {
  */
 
 MatchGame.flipCard = function($card, $game) {
-
-  if ($card.data('flipped')) {
+  if ($card.data('isFlipped')) {
     return;
   }
 
-  $card.css('background-color', $card.data('color'));
-  $card.text($card.data('value'));
-  $card.data('flipped', true);
-  //$flippedCards.push($card);
+  $card.css('background-color', $card.data('color'))
+      .text($card.data('value'))
+      .data('isFlipped', true);
 
   var flippedCards = $game.data('flippedCards');
   flippedCards.push($card);
 
-  var $card1 = flippedCards[0];
-  var $card2 = flippedCards[1];
-
-  if (flippedCards.length == 2) {
-
-      if ($card1.data('value') == $card2.data('value')) {
-        $card1.css('background-color', 'rgb(153, 153, 153)', 'color', 'rgb(204, 204, 204)');
-        $card2.css('background-color', 'rgb(153, 153, 153)', 'color', 'rgb(204, 204, 204)');
-      } else {
-        $('.card').off('click');
-        setTimeout(function () {
-          $card1.text('').css('background-color', 'rgb(32, 64, 86)').data('flipped', false).html('');
-          $card2.text('').css('background-color', 'rgb(32, 64, 86)').data('flipped', false).html('');
-          //$flippedCards.length = 0;
-        }, 1000);
-      }
-      $game.data('flippedCards', []);
-    }
+  if (flippedCards.length === 2) {
+    if (flippedCards[0].data('value') === flippedCards[1].data('value')) {
+      const rollSound = new Audio("./resources/explosion-04.wav");
+      rollSound.play();
+      //addEventListener("click", e => rollSound.play());
+      var matchCss = {
+        backgroundColor: 'rgb(153, 153, 153)',
+        color: 'rgb(204, 204, 204)'
+      };
+      flippedCards[0].css(matchCss);
+      flippedCards[1].css(matchCss);
+    } else {
+      var card1 = flippedCards[0];
+      var card2 = flippedCards[1];
+      window.setTimeout(function() {
+        card1.css('background-color', 'rgb(32, 64, 86)')
+            .text('')
+            .data('isFlipped', false);
+        card2.css('background-color', 'rgb(32, 64, 86)')
+            .text('')
+            .data('isFlipped', false);
+      }, 350);
+    };
+    $game.data('flippedCards', []);
+  };
 };
