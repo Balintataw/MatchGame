@@ -14,6 +14,7 @@ $(document).ready(function() {
 
 $('#btn-1').on('click', function() {
   var counter = 0;
+  document.getElementById('count').innerHTML = counter;
   var values = MatchGame.generateCardValues();
   MatchGame.renderCards(MatchGame.generateCardValues(), $('#game'));
 });
@@ -23,7 +24,9 @@ $('#btn-1').on('click', function() {
 
 var cardClick = (function () {
   var counter = 0;
-  return function () {return counter += 1};
+  return function () {
+    return counter += 1
+  };
 })();
 
 function myFunction () {
@@ -33,8 +36,8 @@ function myFunction () {
 /* --reset counter --*/
 
 var reset = function () {
-  a = 0;
-  document.getElementById('count').innerHTML = a;
+  window .location.reload();
+  //document.getElementById('count').innerHTML = a;
 };
 
 /*
