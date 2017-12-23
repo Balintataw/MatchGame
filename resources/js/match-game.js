@@ -9,15 +9,15 @@ $(document).ready(function() {
   var $game = $('#game');
   var values = MatchGame.generateCardValues();
   MatchGame.renderCards(values, $game);
-  $(':reset')
 });
 
-$('#btn-1').on('click', function() {
-  var counter = 0;
-  document.getElementById('count').innerHTML = counter;
-  var values = MatchGame.generateCardValues();
-  MatchGame.renderCards(MatchGame.generateCardValues(), $('#game'));
-});
+// -------------not necessary with full page reload
+// $('#btn-1').on('click', function() {
+//   var counter = 0;
+//   document.getElementById('count').innerHTML = counter;
+//   var values = MatchGame.generateCardValues();
+//   MatchGame.renderCards(MatchGame.generateCardValues(), $('#game'));
+// });
 
 
 /* --Click Counter-- */
@@ -37,7 +37,6 @@ function myFunction () {
 
 var reset = function () {
   window .location.reload();
-  //document.getElementById('count').innerHTML = a;
 };
 
 /*
@@ -59,7 +58,6 @@ MatchGame.generateCardValues = function () {
     var randomValue = sequentialValues.splice(randomIndex, 1)[0];
     cardValues.push(randomValue);
   };
-
   return cardValues;
 };
 
@@ -101,12 +99,6 @@ MatchGame.renderCards = function(cardValues, $game) {
   $('.card').click(function() {
     MatchGame.flipCard($(this), $('#game'));
   });
-
-  $('#reset-button').on('click', function() {
-    clearInterval(timerID);
-    $('.timer').text("");
-    MatchGame.renderCards(MatchGame.generateCardValues(), $('#game'));
-  });
 };
 
 /*
@@ -128,9 +120,6 @@ MatchGame.flipCard = function($card, $game) {
 
   if (flippedCards.length === 2) {
     if (flippedCards[0].data('value') === flippedCards[1].data('value')) {
-      const rollSound = new Audio("./resources/explosion-04.wav");
-      rollSound.play();
-      //addEventListener("click", e => rollSound.play());
       var matchCss = {
         backgroundColor: 'rgb(153, 153, 153)',
         color: 'rgb(204, 204, 204)'
