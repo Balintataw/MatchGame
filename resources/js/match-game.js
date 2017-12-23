@@ -19,8 +19,6 @@ $('#btn-1').on('click', function() {
 });
 
 
-
-
 /* --Click Counter-- */
 
 var cardClick = (function () {
@@ -35,9 +33,9 @@ function myFunction () {
 /* --reset counter --*/
 
 var reset = function () {
-    resetCount = 0;
-    document.getElementById('count').innerHTML = resetCount;
-    }
+  a = 0;
+  document.getElementById('count').innerHTML = a;
+};
 
 /*
   Generates and returns an array of matching card values.
