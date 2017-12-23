@@ -33,17 +33,11 @@ function myFunction () {
 };
 
 /* --reset counter --*/
-//
-// $('btn-1').on('click', function() {
-//   var resetClick = (function() {
-//     var reset = 0;
-//     return function () {return reset = 0};
-//   })();
-//
-//   function myFunction () {
-//     document.getElementById("count").innerHTML = resetClick();
-// };
-// });
+
+var reset = function () {
+    resetCount = 0;
+    document.getElementById('count').innerHTML = resetCount;
+    }
 
 /*
   Generates and returns an array of matching card values.
